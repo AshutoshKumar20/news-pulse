@@ -22,10 +22,14 @@ def run():
 
     added = 0
     for article in new_articles:
-        article["body"] = extract_body(article["link"])
-        inserted_id = insert_article(conn, article)
-        if inserted_id:
-            added += 1
+        try:
+            article["body"] = extract_body(article["link"])
+            inserted_id = insert_article(conn, article)
+            if inserted_id:
+                added += 1
+        except Exception as e:
+            print(f"Skipping article, could not process {article.get('link')}: {e}")
+            continue
 
     all_articles = fetch_all_articles(conn)
     clusters = cluster_articles(all_articles)
